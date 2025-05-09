@@ -16,6 +16,12 @@ curl -s -X POST http://localhost:8080/api/v1/check \
   -d '{"content":"你真是个傻逼，滚开！","user_id":"user123","scene":"comment"}' | jq .
 echo -e "\n"
 
+echo "测试敏感内容2..."
+curl -s -X POST http://localhost:8080/api/v1/check \
+  -H "Content-Type: application/json" \
+  -d '{"content":"你麻痹","user_id":"user123","scene":"comment"}' | jq .
+echo -e "\n"
+
 # 计算时间戳
 now=$(date +%s)
 time5=$(($now - 300))  # 5分钟前

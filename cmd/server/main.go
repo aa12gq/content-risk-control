@@ -15,6 +15,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/aa12gq/content-risk-control/internal/app/config"
 	"github.com/aa12gq/content-risk-control/internal/app/service"
@@ -65,6 +66,10 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	service.RegisterGRPCServer(grpcServer, contentService)
+
+	// 注册gRPC反射
+	reflection.Register(grpcServer)
+	sugar.Info("Registered gRPC reflection service")
 
 	ginEngine := gin.Default()
 	service.RegisterHTTPHandlers(ginEngine, contentService)
