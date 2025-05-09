@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  grpc_port: 50051
+  env: development
+  log_level: debug
+
+database:
+  driver: mysql
+  host: localhost
+  port: 3306
+  username: root
+  password: 123456
+  dbname: content_risk_control
+  max_idle_conns: 10
+  max_open_conns: 100
+  conn_max_lifetime: 3600
+
+redis:
+  host: localhost
+  port: 63791
+  password: 123456
+  db: 0
+
+content_check:
+  # 敏感词库更新间隔（秒）
+  sensitive_words_update_interval: 3600
+  # 是否使用机器学习模型
+  use_ml_model: true
+  # 风控得分阈值（0-100）
+  risk_score_threshold: 70
+  # 审核缓存时间（秒）
+  cache_ttl: 300
+  # 批量审核最大条数
+  batch_check_max_size: 100
+  # 上下文考虑的历史消息数量
+  context_history_size: 5
+
+ai_service:
+  url: http://localhost:8000
+  api_key: your_api_key_here
+  timeout: 5000 # ms
+
+nlp_service:
+  enabled: false
+  model_path: ./models/nlp_model
+  server_port: 8010
+  threshold: 0.6
+  context_size: 5
+  # 本地大语言模型配置
+  use_local_llm: true
+  local_llm_type: ollama
+  local_llm_api: http://localhost:11434/api/chat
+  model_name: llama3
+
+rule_engine:
+  rule_update_interval: 600 # 规则更新间隔（秒）
+  default_rules_path: ./config/rules.json

@@ -1,0 +1,84 @@
+{
+  "rules": [
+    {
+      "id": "sensitive_words",
+      "name": "敏感词检测",
+      "description": "检测内容中是否包含敏感词",
+      "enabled": true,
+      "priority": 100,
+      "action": "block",
+      "score": 80,
+      "config": {
+        "match_type": "exact",
+        "words": ["敏感词1", "敏感词2"],
+        "category": "sensitive"
+      }
+    },
+    {
+      "id": "spam_detection",
+      "name": "垃圾内容检测",
+      "description": "检测内容是否为垃圾信息",
+      "enabled": true,
+      "priority": 90,
+      "action": "mark",
+      "score": 60,
+      "config": {
+        "threshold": 0.7,
+        "patterns": ["\\d{11}", "(?i)buy now", "(?i)click here"]
+      }
+    },
+    {
+      "id": "context_analysis",
+      "name": "上下文分析",
+      "description": "基于上下文分析内容风险",
+      "enabled": true,
+      "priority": 80,
+      "action": "review",
+      "score": 50,
+      "config": {
+        "context_size": 5,
+        "sensitivity": "medium",
+        "categories": ["harassment", "hate_speech", "violence"]
+      }
+    },
+    {
+      "id": "user_reputation",
+      "name": "用户信誉",
+      "description": "基于用户历史行为评估内容风险",
+      "enabled": true,
+      "priority": 70,
+      "action": "none",
+      "score": 30,
+      "config": {
+        "low_reputation_threshold": 20,
+        "high_reputation_threshold": 80
+      }
+    }
+  ],
+  "actions": {
+    "block": {
+      "name": "阻止",
+      "description": "阻止内容发布"
+    },
+    "mark": {
+      "name": "标记",
+      "description": "标记内容为可疑"
+    },
+    "review": {
+      "name": "人工审核",
+      "description": "将内容提交人工审核"
+    },
+    "none": {
+      "name": "无操作",
+      "description": "不执行任何操作"
+    }
+  },
+  "categories": {
+    "sensitive": "敏感内容",
+    "spam": "垃圾信息",
+    "harassment": "骚扰",
+    "hate_speech": "仇恨言论",
+    "violence": "暴力内容",
+    "adult": "成人内容"
+  }
+}

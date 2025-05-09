@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package content_check;
+
+option go_package = "github.com/aa12gq/content-risk-control/api/proto;pb";
+
+// 内容审核服务
+service ContentCheckService {
+  // 单条内容审核
+  rpc CheckContent (CheckContentRequest) returns (CheckContentResponse) {}
+  
+  // 批量内容审核
+  rpc BatchCheckContent (BatchCheckContentRequest) returns (BatchCheckContentResponse) {}
+  
+  // 基于上下文的内容审核
+  rpc CheckContentWithContext (CheckContentWithContextRequest) returns (CheckContentResponse) {}
+  
+  // 实时内容审核（流式响应）
+  rpc StreamCheckContent (stream CheckContentRequest) returns (stream CheckContentResponse) {}
+}
+
+// 审核结果类型
+enum ResultType {
+  PASS = 0;       // 通过
+  REVIEW = 1;     // 人工审核
+  REJECT = 2;     // 拒绝
+  WARNING = 3;    // 警告
+}
+
+// 风险类型
+enum RiskType {
+  UNKNOWN = 0;            // 未知风险
+  SENSITIVE_WORD = 1;     // 敏感词
+  SPAM = 2;               // 垃圾信息
+  HARASSMENT = 3;         // 骚扰
+  HATE_SPEECH = 4;        // 仇恨言论
+  VIOLENCE = 5;           // 暴力内容
+  ADULT = 6;              // 成人内容
+  CONTEXT_VIOLATION = 7;  // 上下文违规
+  SUSPICIOUS_BEHAVIOR = 8;// 可疑行为
+}
+
+// 内容审核请求
+message CheckContentRequest {
+  string content = 1;                   // 待审核内容
+  string user_id = 2;                   // 用户ID
+  string scene = 3;                     // 场景（如评论、帖子、消息等）
+  string request_id = 4;                // 请求ID
+  map<string, string> extra_data = 5;   // 扩展数据
+}
+
+// 批量内容审核请求
+message BatchCheckContentRequest {
+  repeated CheckContentRequest items = 1; // 待审核内容列表
+  string batch_id = 2;                    // 批次ID
+}
+
+// 上下文内容审核请求
+message CheckContentWithContextRequest {
+  string content = 1;                    // 当前待审核内容
+  string user_id = 2;                    // 用户ID
+  string scene = 3;                      // 场景
+  string request_id = 4;                 // 请求ID
+  repeated ContextItem context_items = 5; // 上下文内容列表
+  map<string, string> extra_data = 6;    // 扩展数据
+}
+
+// 上下文内容项
+message ContextItem {
+  string content = 1;       // 内容
+  string user_id = 2;       // 用户ID
+  int64 timestamp = 3;      // 时间戳
+  string content_id = 4;    // 内容ID
+}
+
+// 风险项
+message RiskItem {
+  RiskType type = 1;               // 风险类型
+  float score = 2;                 // 风险分数
+  string description = 3;          // 风险描述
+  map<string, string> details = 4; // 详情
+}
+
+// 内容审核响应
+message CheckContentResponse {
+  ResultType result = 1;           // 审核结果
+  float risk_score = 2;            // 风险分数
+  repeated RiskItem risks = 3;     // 风险项列表
+  string request_id = 4;           // 请求ID
+  string suggestion = 5;           // 建议
+  int64 cost_time = 6;             // 耗时（毫秒）
+  map<string, string> extra = 7;   // 扩展信息
+}
+
+// 批量内容审核响应
+message BatchCheckContentResponse {
+  repeated CheckContentResponse results = 1; // 结果列表
+  string batch_id = 2;                       // 批次ID
+  int64 total_cost_time = 3;                 // 总耗时（毫秒）
+} 
